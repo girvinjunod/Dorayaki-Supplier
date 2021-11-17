@@ -8,7 +8,6 @@ import javax.jws.soap.SOAPBinding.Style;
 
 @WebService
 @SOAPBinding(style = Style.DOCUMENT)
-
 public interface DorayakiService {
     @WebMethod
     public String createDorayakiDatabase();
