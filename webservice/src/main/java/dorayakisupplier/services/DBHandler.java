@@ -11,7 +11,7 @@ public class DBHandler {
     public DBHandler(){
         try{
             System.out.println("Connecting to MySQL DB...");
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             this.connection = DriverManager.getConnection(DB_URL, DB_Username, DB_Password);
             System.out.println("Database connected");
         } catch (Exception e){

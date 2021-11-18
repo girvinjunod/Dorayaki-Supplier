@@ -9,9 +9,18 @@ import javax.jws.soap.SOAPBinding.Style;
 @WebService
 @SOAPBinding(style = Style.DOCUMENT)
 public interface DorayakiService {
-    @WebMethod
-    public String createDorayakiDatabase();
+    // @WebMethod
+    // public String createDorayakiDatabase();
+
+    // @WebMethod
+    // public String addDorayaki();
 
     @WebMethod
-    public String addDorayaki();
+    public String addRequest();
+
+    @WebMethod
+    public String getStatusRequest(int id_store);
+
+    @WebMethod
+    public String getAllRecipe();
 }
