@@ -6,6 +6,11 @@ import java.sql.*;
 import java.util.Date;
 import java.util.Calendar;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+
 @WebService(endpointInterface = "dorayakisupplier.services.DorayakiService")
 public class DorayakiServiceImpl implements DorayakiService {
     // @Override
@@ -91,7 +96,18 @@ public class DorayakiServiceImpl implements DorayakiService {
                 System.out.println("Request sent " + Integer.toString(reqres));
 
                 // kontak backend buat email
+                // Create an instance of HttpClient.
+                HttpClient httpClient = HttpClients.createDefault();
 
+                // Create a method instance.
+                HttpGet get = new HttpGet("http://localhost:4000/sendEmail");
+                try{
+                    HttpResponse response = httpClient.execute(get);
+                    System.out.println(response);
+                } catch(Exception e){
+                    e.printStackTrace();
+                    return "Something went wrong, " + e.getMessage();
+                }
 
                 return "Request sent, please check your email";
             }
@@ -109,6 +125,20 @@ public class DorayakiServiceImpl implements DorayakiService {
 
     @Override
     public String getAllRecipe(){
+        // Create an instance of HttpClient.
+        HttpClient httpClient = HttpClients.createDefault();
+
+        // Create a method instance.
+        HttpGet get = new HttpGet("http://localhost:4000/getAllRecipe");
+        try{
+            HttpResponse response = httpClient.execute(get);
+            System.out.println(response);
+        } catch(Exception e){
+            e.printStackTrace();
+            return "Something went wrong, " + e.getMessage();
+        }
+
+        // handle response dan oper ke store
         return "get all recipe";
     }
 }
