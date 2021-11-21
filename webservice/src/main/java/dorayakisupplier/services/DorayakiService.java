@@ -16,7 +16,7 @@ public interface DorayakiService {
     // public String addDorayaki();
 
     @WebMethod
-    public String addRequest();
+    public String addRequest(String ip, String endpoint, int id_recipe, int count_request);
 
     @WebMethod
     public String getStatusRequest(int id_store);

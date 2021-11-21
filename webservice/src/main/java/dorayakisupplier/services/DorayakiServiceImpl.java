@@ -47,14 +47,8 @@ public class DorayakiServiceImpl implements DorayakiService {
     // }
 
     @Override
-    public String addRequest(){
+    public String addRequest(String ip, String endpoint, int id_recipe, int count_request){
         try{
-            // dipindahin jadi param
-            String temp_ip = "1.2.3.4.5";
-            String temp_endpoint = "somewhere";
-            int temp_id_recipe = 1;
-            int temp_count_request = 7;
-
 
             DBHandler handler= new DBHandler();
             Connection conn = handler.getConnection();
@@ -69,7 +63,7 @@ public class DorayakiServiceImpl implements DorayakiService {
             timestamp = new Timestamp(cal.getTime().getTime());
 
             String sql = "SELECT count(*) FROM log_request WHERE ip_store='%s' AND endpoint_request='%s' AND time_request > '%s'";
-            String formattedSQL = String.format(sql,temp_ip,temp_endpoint, timestamp);
+            String formattedSQL = String.format(sql,ip,endpoint, timestamp);
             ResultSet result = statement.executeQuery(formattedSQL);
             System.out.println(result);
             int count = 0;
@@ -85,13 +79,13 @@ public class DorayakiServiceImpl implements DorayakiService {
                 System.out.println("Inputting request into request table");
                 // Input ke log request
                 String sqlrequestlog = "INSERT INTO log_request (ip_store, endpoint_request) VALUES('%s', '%s');";
-                String formattedSQLrequestlog = String.format(sqlrequestlog,temp_ip, temp_endpoint);
+                String formattedSQLrequestlog = String.format(sqlrequestlog,ip, endpoint);
                 int reqreslog = statement.executeUpdate(formattedSQLrequestlog);
                 System.out.println("Request logged " + Integer.toString(reqreslog));
 
                 // Input ke request
-                String sqlrequest = "INSERT INTO request (ip_store, status_request, id_recipe, count_request) VALUES('%s', '%s', %d, %d);";
-                String formattedSQLrequest = String.format(sqlrequest,temp_ip,"WAITING",temp_id_recipe, temp_count_request);
+                String sqlrequest = "INSERT INTO request (ip_store, status_request, id_recipe, count_request, updated) VALUES('%s', '%s', %d, %d, %d);";
+                String formattedSQLrequest = String.format(sqlrequest,ip,"WAITING",id_recipe, count_request, 0);
                 int reqres = statement.executeUpdate(formattedSQLrequest);
                 System.out.println("Request sent " + Integer.toString(reqres));
 
@@ -120,6 +114,8 @@ public class DorayakiServiceImpl implements DorayakiService {
 
     @Override
     public String getStatusRequest(int id_store){
+        // sekalian update di store
+        // set updated to true
         return "get status request";
     }
 
