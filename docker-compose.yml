@@ -4,3 +4,11 @@ services:
     build: .
     ports:
       - 8080:8080
+    env_file: /webservice/.env
+    environment:
+      - HOSTNAME=server
+      - MYSQL_HOST=mysql
+networks:
+  default:
+    external: true
+    name: dorayaki-factory-server_default

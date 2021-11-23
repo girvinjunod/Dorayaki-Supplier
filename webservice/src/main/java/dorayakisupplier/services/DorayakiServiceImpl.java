@@ -10,6 +10,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import io.github.cdimascio.dotenv.Dotenv;
+import io.github.cdimascio.dotenv.DotenvException;
 
 @WebService(endpointInterface = "dorayakisupplier.services.DorayakiService")
 public class DorayakiServiceImpl implements DorayakiService {
@@ -94,7 +96,11 @@ public class DorayakiServiceImpl implements DorayakiService {
                 HttpClient httpClient = HttpClients.createDefault();
 
                 // Create a method instance.
-                HttpGet get = new HttpGet("http://localhost:4000/sendEmail");
+                Dotenv dotenv = Dotenv.load();
+                System.out.println("Hostname: " + dotenv.get("HOSTNAME"));
+                //HttpGet get = new HttpGet("http://localhost:4000/sendEmail");
+				// HttpGet get = new HttpGet("http://server:4000/sendEmail");
+                HttpGet get = new HttpGet("http://" +dotenv.get("HOSTNAME")+":4000/sendEmail");
                 try{
                     HttpResponse response = httpClient.execute(get);
                     System.out.println(response);
@@ -123,9 +129,12 @@ public class DorayakiServiceImpl implements DorayakiService {
     public String getAllRecipe(){
         // Create an instance of HttpClient.
         HttpClient httpClient = HttpClients.createDefault();
-
+        System.out.println("getRecipe");
         // Create a method instance.
-        HttpGet get = new HttpGet("http://localhost:4000/getAllRecipe");
+        Dotenv dotenv = Dotenv.load();
+        System.out.println("Hostname: " + dotenv.get("HOSTNAME"));
+        HttpGet get = new HttpGet("http://" +dotenv.get("HOSTNAME")+":4000/getAllRecipe");
+        // HttpGet get = new HttpGet("http://server:4000/getAllRecipe");
         try{
             HttpResponse response = httpClient.execute(get);
             System.out.println(response);
