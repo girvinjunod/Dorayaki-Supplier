@@ -159,7 +159,6 @@ public class DorayakiServiceImpl implements DorayakiService {
         }
         int updateResultLog = statement.executeUpdate(updateFormattedSQL);
         System.out.println("Table Updated: " + Integer.toString(updateResultLog));
-        System.out.println("anjer");
         
         return hasilQuery;
         
