@@ -51,7 +51,7 @@ public class DorayakiServiceImpl implements DorayakiService {
     @Override
     public String addRequest(String ip, String endpoint, int id_recipe, int count_request){
         try{
-
+            System.out.print(ip);
             DBHandler handler= new DBHandler();
             Connection conn = handler.getConnection();
             Statement statement = conn.createStatement();
@@ -109,20 +109,65 @@ public class DorayakiServiceImpl implements DorayakiService {
                     return "Something went wrong, " + e.getMessage();
                 }
 
-                return "Request sent, please check your email";
+                System.out.println("Request sent, please check your email");
+                return "1"; 
             }
         }
         catch (Exception e){
             e.printStackTrace();
-            return "Something went wrong, " + e.getMessage();
+            System.out.println("Something went wrong, " + e.getMessage());
+            return "0";
         }
     }
 
     @Override
-    public String getStatusRequest(int id_store){
-        // sekalian update di store
-        // set updated to true
-        return "get status request";
+    public String[] getStatusRequest(String ip_store){
+      try{
+        System.out.println(ip_store);
+        DBHandler handler= new DBHandler();
+        Connection conn = handler.getConnection();
+        Statement statement = conn.createStatement();
+
+        String sql = "SELECT * FROM request WHERE ip_store='%s' AND status_request='ACCEPTED' AND updated=0";
+        String countSQL = "SELECT count(*) FROM request WHERE ip_store='%s' AND status_request='ACCEPTED' AND updated=0";
+        String updateSQL = "UPDATE request SET updated=1 WHERE ip_store='%s' AND status_request='ACCEPTED' AND updated=0";
+        
+        String formattedSQL = String.format(sql, ip_store);
+        String countFormattedSQL = String.format(countSQL, ip_store);
+        String updateFormattedSQL = String.format(updateSQL, ip_store);
+
+        System.out.println(formattedSQL);
+        System.out.println(countFormattedSQL);
+        System.out.println(updateFormattedSQL);
+        
+        ResultSet countResult = statement.executeQuery(countFormattedSQL);
+
+        int count = 0;
+        while(countResult.next()){
+          count = countResult.getInt(1);
+        }
+        countResult.close();
+        System.out.println(count);
+        ResultSet result = statement.executeQuery(formattedSQL);
+        String[] hasilQuery = new String[count]  ;  
+        int i = 0;
+        while(result.next()){
+          String dataArray = String.valueOf(result.getInt(4)) + ";" + String.valueOf(result.getInt(5)) ;
+          System.out.println(dataArray);
+          hasilQuery[i] = dataArray ;
+          i++;
+        }
+        int updateResultLog = statement.executeUpdate(updateFormattedSQL);
+        System.out.println("Table Updated: " + Integer.toString(updateResultLog));
+        System.out.println("anjer");
+        
+        return hasilQuery;
+        
+      } catch(Exception e){
+          System.out.println(e);
+          String[] mangga = new String[0];
+          return mangga;
+      }
     }
 
     @Override
@@ -145,5 +190,14 @@ public class DorayakiServiceImpl implements DorayakiService {
 
         // handle response dan oper ke store
         return "get all recipe";
+    }
+
+    @Override
+    public String test(String ip_store){
+        // Create an instance of HttpClient.
+        System.out.println(ip_store);
+        return ip_store;
+        // handle response dan oper ke store
+        // return "get all recipe";
     }
 }

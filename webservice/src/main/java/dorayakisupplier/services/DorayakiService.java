@@ -19,8 +19,11 @@ public interface DorayakiService {
     public String addRequest(String ip, String endpoint, int id_recipe, int count_request);
 
     @WebMethod
-    public String getStatusRequest(int id_store);
+    public String[] getStatusRequest(String ip_store);
 
     @WebMethod
     public String getAllRecipe();
+
+    @WebMethod
+    public String test(String ip_store);
 }
