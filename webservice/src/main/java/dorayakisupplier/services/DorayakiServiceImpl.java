@@ -12,6 +12,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvException;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+import org.json.JSONException;
 
 @WebService(endpointInterface = "dorayakisupplier.services.DorayakiService")
 public class DorayakiServiceImpl implements DorayakiService {
@@ -95,11 +100,12 @@ public class DorayakiServiceImpl implements DorayakiService {
                 // Create an instance of HttpClient.
                 HttpClient httpClient = HttpClients.createDefault();
 
-                // Create a method instance.
+                // Load env variables
                 Dotenv dotenv = Dotenv.load();
                 System.out.println("Hostname: " + dotenv.get("HOSTNAME"));
                 //HttpGet get = new HttpGet("http://localhost:4000/sendEmail");
 				// HttpGet get = new HttpGet("http://server:4000/sendEmail");
+                // Create a method instance.
                 HttpGet get = new HttpGet("http://" +dotenv.get("HOSTNAME")+":4000/sendEmail");
                 try{
                     HttpResponse response = httpClient.execute(get);
@@ -174,14 +180,33 @@ public class DorayakiServiceImpl implements DorayakiService {
         // Create an instance of HttpClient.
         HttpClient httpClient = HttpClients.createDefault();
         System.out.println("getRecipe");
-        // Create a method instance.
+        // Load env variables
         Dotenv dotenv = Dotenv.load();
         System.out.println("Hostname: " + dotenv.get("HOSTNAME"));
+        // Create a method instance.
         HttpGet get = new HttpGet("http://" +dotenv.get("HOSTNAME")+":4000/getAllRecipe");
+        System.out.println("Executing request " + get.getMethod() + " " + get.getURI());
         // HttpGet get = new HttpGet("http://server:4000/getAllRecipe");
         try{
             HttpResponse response = httpClient.execute(get);
             System.out.println(response);
+            //Ambil data
+            HttpEntity entity = response.getEntity();
+            String responseString = EntityUtils.toString(entity, "UTF-8");
+            System.out.println(responseString); //masi dalam bntuk JSON string
+
+            JSONObject resJSON = null;
+            try {
+                resJSON = new JSONObject(responseString);
+                //Ubah ke JSON
+                System.out.println(resJSON);
+                //JSON String
+                System.out.println(resJSON.toString());
+            } 
+            catch (JSONException e) {
+                e.printStackTrace();
+                return "Something went wrong, " + e.getMessage();
+            }
         } catch(Exception e){
             e.printStackTrace();
             return "Something went wrong, " + e.getMessage();
