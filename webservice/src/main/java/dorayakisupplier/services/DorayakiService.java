@@ -5,7 +5,6 @@ import javax.jws.WebMethod;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 
-
 @WebService
 @SOAPBinding(style = Style.DOCUMENT)
 public interface DorayakiService {
@@ -22,7 +21,7 @@ public interface DorayakiService {
     public String[] getStatusRequest(String ip_store);
 
     @WebMethod
-    public String getAllRecipe();
+    public String[] getAllRecipe();
 
     @WebMethod
     public String test(String ip_store);
