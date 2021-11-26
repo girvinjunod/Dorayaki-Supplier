@@ -80,9 +80,9 @@ public class DorayakiServiceImpl implements DorayakiService {
                 System.out.println(count);
             }
 
-            if (count > 5) {
+            if (count >= 3) {
                 System.out.println("Too much request");
-                return "Too much request, requst cancelled";
+                return "0";
             } else {
                 System.out.println("Inputting request into request table");
                 // Input ke log request
