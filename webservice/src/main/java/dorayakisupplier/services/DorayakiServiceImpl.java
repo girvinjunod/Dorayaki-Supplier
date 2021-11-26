@@ -110,7 +110,7 @@ public class DorayakiServiceImpl implements DorayakiService {
                 HttpGet get = new HttpGet("http://" + dotenv.get("HOSTNAME") + ":4000/sendEmail");
                 try {
                     HttpResponse response = httpClient.execute(get);
-                    System.out.println(response);
+                    System.out.println("ada response");
                 } catch (Exception e) {
                     e.printStackTrace();
                     return "Something went wrong, " + e.getMessage();
