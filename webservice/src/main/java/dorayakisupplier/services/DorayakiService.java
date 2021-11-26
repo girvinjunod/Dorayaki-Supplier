@@ -22,7 +22,7 @@ public interface DorayakiService {
     public String[] getStatusRequest(String ip_store);
 
     @WebMethod
-    public String getAllRecipe();
+    public String[] getAllRecipe();
 
     @WebMethod
     public String test(String ip_store);

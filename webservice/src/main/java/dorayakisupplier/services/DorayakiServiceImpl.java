@@ -16,48 +16,49 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.json.JSONException;
 
 @WebService(endpointInterface = "dorayakisupplier.services.DorayakiService")
 public class DorayakiServiceImpl implements DorayakiService {
     // @Override
     // public String createDorayakiDatabase(){
-    //     try{
-    //         DBHandler handler= new DBHandler();
-    //         Connection conn = handler.getConnection();
-    //         Statement statement = conn.createStatement();
-    //         String sql = "CREATE TABLE testjava (id INT, apel VARCHAR(255));";
-    //         int count  = statement.executeUpdate(sql);
-    //         return "Success with value: " + Integer.toString(count);
-    //     }
-    //     catch (Exception e){
-    //         e.printStackTrace();
-    //         return "Something went wrong, " + e.getMessage();
-    //     }
+    // try{
+    // DBHandler handler= new DBHandler();
+    // Connection conn = handler.getConnection();
+    // Statement statement = conn.createStatement();
+    // String sql = "CREATE TABLE testjava (id INT, apel VARCHAR(255));";
+    // int count = statement.executeUpdate(sql);
+    // return "Success with value: " + Integer.toString(count);
+    // }
+    // catch (Exception e){
+    // e.printStackTrace();
+    // return "Something went wrong, " + e.getMessage();
+    // }
     // }
 
     // @Override
     // public String addDorayaki(){
-    //     try{
-    //         DBHandler handler= new DBHandler();
-    //         Connection conn = handler.getConnection();
-    //         Statement statement = conn.createStatement();
-    //         String sql = "INSERT INTO testjava (id, apel) VALUES(%d, '%s');";
-    //         String formattedSQL = String.format(sql,69,"mangga");
-    //         int count  = statement.executeUpdate(formattedSQL);
-    //         return "Add dorayaki success with value: " + Integer.toString(count);
-    //     }
-    //     catch (Exception e){
-    //         e.printStackTrace();
-    //         return "Something went wrong, " + e.getMessage();
-    //     }
+    // try{
+    // DBHandler handler= new DBHandler();
+    // Connection conn = handler.getConnection();
+    // Statement statement = conn.createStatement();
+    // String sql = "INSERT INTO testjava (id, apel) VALUES(%d, '%s');";
+    // String formattedSQL = String.format(sql,69,"mangga");
+    // int count = statement.executeUpdate(formattedSQL);
+    // return "Add dorayaki success with value: " + Integer.toString(count);
+    // }
+    // catch (Exception e){
+    // e.printStackTrace();
+    // return "Something went wrong, " + e.getMessage();
+    // }
     // }
 
     @Override
-    public String addRequest(String ip, String endpoint, int id_recipe, int count_request){
-        try{
+    public String addRequest(String ip, String endpoint, int id_recipe, int count_request) {
+        try {
             System.out.print(ip);
-            DBHandler handler= new DBHandler();
+            DBHandler handler = new DBHandler();
             Connection conn = handler.getConnection();
             Statement statement = conn.createStatement();
 
@@ -70,29 +71,29 @@ public class DorayakiServiceImpl implements DorayakiService {
             timestamp = new Timestamp(cal.getTime().getTime());
 
             String sql = "SELECT count(*) FROM log_request WHERE ip_store='%s' AND endpoint_request='%s' AND time_request > '%s'";
-            String formattedSQL = String.format(sql,ip,endpoint, timestamp);
+            String formattedSQL = String.format(sql, ip, endpoint, timestamp);
             ResultSet result = statement.executeQuery(formattedSQL);
             System.out.println(result);
             int count = 0;
-            while (result.next()){
+            while (result.next()) {
                 count = Integer.parseInt(result.getString(1));
                 System.out.println(count);
             }
 
-            if (count > 10){
+            if (count > 10) {
                 System.out.println("Too much request");
                 return "Too much request, requst cancelled";
-            } else{
+            } else {
                 System.out.println("Inputting request into request table");
                 // Input ke log request
                 String sqlrequestlog = "INSERT INTO log_request (ip_store, endpoint_request) VALUES('%s', '%s');";
-                String formattedSQLrequestlog = String.format(sqlrequestlog,ip, endpoint);
+                String formattedSQLrequestlog = String.format(sqlrequestlog, ip, endpoint);
                 int reqreslog = statement.executeUpdate(formattedSQLrequestlog);
                 System.out.println("Request logged " + Integer.toString(reqreslog));
 
                 // Input ke request
                 String sqlrequest = "INSERT INTO request (ip_store, status_request, id_recipe, count_request, updated) VALUES('%s', '%s', %d, %d, %d);";
-                String formattedSQLrequest = String.format(sqlrequest,ip,"WAITING",id_recipe, count_request, 0);
+                String formattedSQLrequest = String.format(sqlrequest, ip, "WAITING", id_recipe, count_request, 0);
                 int reqres = statement.executeUpdate(formattedSQLrequest);
                 System.out.println("Request sent " + Integer.toString(reqres));
 
@@ -103,23 +104,22 @@ public class DorayakiServiceImpl implements DorayakiService {
                 // Load env variables
                 Dotenv dotenv = Dotenv.load();
                 System.out.println("Hostname: " + dotenv.get("HOSTNAME"));
-                //HttpGet get = new HttpGet("http://localhost:4000/sendEmail");
-				// HttpGet get = new HttpGet("http://server:4000/sendEmail");
+                // HttpGet get = new HttpGet("http://localhost:4000/sendEmail");
+                // HttpGet get = new HttpGet("http://server:4000/sendEmail");
                 // Create a method instance.
-                HttpGet get = new HttpGet("http://" +dotenv.get("HOSTNAME")+":4000/sendEmail");
-                try{
+                HttpGet get = new HttpGet("http://" + dotenv.get("HOSTNAME") + ":4000/sendEmail");
+                try {
                     HttpResponse response = httpClient.execute(get);
-                    System.out.println(response);
-                } catch(Exception e){
+                    System.out.println("ada response");
+                } catch (Exception e) {
                     e.printStackTrace();
                     return "Something went wrong, " + e.getMessage();
                 }
 
                 System.out.println("Request sent, please check your email");
-                return "1"; 
+                return "1";
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Something went wrong, " + e.getMessage());
             return "0";
@@ -127,56 +127,56 @@ public class DorayakiServiceImpl implements DorayakiService {
     }
 
     @Override
-    public String[] getStatusRequest(String ip_store){
-      try{
-        System.out.println(ip_store);
-        DBHandler handler= new DBHandler();
-        Connection conn = handler.getConnection();
-        Statement statement = conn.createStatement();
+    public String[] getStatusRequest(String ip_store) {
+        try {
+            System.out.println(ip_store);
+            DBHandler handler = new DBHandler();
+            Connection conn = handler.getConnection();
+            Statement statement = conn.createStatement();
 
-        String sql = "SELECT * FROM request WHERE ip_store='%s' AND status_request='ACCEPTED' AND updated=0";
-        String countSQL = "SELECT count(*) FROM request WHERE ip_store='%s' AND status_request='ACCEPTED' AND updated=0";
-        String updateSQL = "UPDATE request SET updated=1 WHERE ip_store='%s' AND status_request='ACCEPTED' AND updated=0";
-        
-        String formattedSQL = String.format(sql, ip_store);
-        String countFormattedSQL = String.format(countSQL, ip_store);
-        String updateFormattedSQL = String.format(updateSQL, ip_store);
+            String sql = "SELECT * FROM request WHERE ip_store='%s' AND status_request='ACCEPTED' AND updated=0";
+            String countSQL = "SELECT count(*) FROM request WHERE ip_store='%s' AND status_request='ACCEPTED' AND updated=0";
+            String updateSQL = "UPDATE request SET updated=1 WHERE ip_store='%s' AND status_request='ACCEPTED' AND updated=0";
 
-        System.out.println(formattedSQL);
-        System.out.println(countFormattedSQL);
-        System.out.println(updateFormattedSQL);
-        
-        ResultSet countResult = statement.executeQuery(countFormattedSQL);
+            String formattedSQL = String.format(sql, ip_store);
+            String countFormattedSQL = String.format(countSQL, ip_store);
+            String updateFormattedSQL = String.format(updateSQL, ip_store);
 
-        int count = 0;
-        while(countResult.next()){
-          count = countResult.getInt(1);
+            System.out.println(formattedSQL);
+            System.out.println(countFormattedSQL);
+            System.out.println(updateFormattedSQL);
+
+            ResultSet countResult = statement.executeQuery(countFormattedSQL);
+
+            int count = 0;
+            while (countResult.next()) {
+                count = countResult.getInt(1);
+            }
+            countResult.close();
+            System.out.println(count);
+            ResultSet result = statement.executeQuery(formattedSQL);
+            String[] hasilQuery = new String[count];
+            int i = 0;
+            while (result.next()) {
+                String dataArray = String.valueOf(result.getInt(4)) + ";" + String.valueOf(result.getInt(5));
+                System.out.println(dataArray);
+                hasilQuery[i] = dataArray;
+                i++;
+            }
+            int updateResultLog = statement.executeUpdate(updateFormattedSQL);
+            System.out.println("Table Updated: " + Integer.toString(updateResultLog));
+
+            return hasilQuery;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            String[] mangga = new String[0];
+            return mangga;
         }
-        countResult.close();
-        System.out.println(count);
-        ResultSet result = statement.executeQuery(formattedSQL);
-        String[] hasilQuery = new String[count]  ;  
-        int i = 0;
-        while(result.next()){
-          String dataArray = String.valueOf(result.getInt(4)) + ";" + String.valueOf(result.getInt(5)) ;
-          System.out.println(dataArray);
-          hasilQuery[i] = dataArray ;
-          i++;
-        }
-        int updateResultLog = statement.executeUpdate(updateFormattedSQL);
-        System.out.println("Table Updated: " + Integer.toString(updateResultLog));
-        
-        return hasilQuery;
-        
-      } catch(Exception e){
-          System.out.println(e);
-          String[] mangga = new String[0];
-          return mangga;
-      }
     }
 
     @Override
-    public String getAllRecipe(){
+    public String[] getAllRecipe() {
         // Create an instance of HttpClient.
         HttpClient httpClient = HttpClients.createDefault();
         System.out.println("getRecipe");
@@ -184,40 +184,46 @@ public class DorayakiServiceImpl implements DorayakiService {
         Dotenv dotenv = Dotenv.load();
         System.out.println("Hostname: " + dotenv.get("HOSTNAME"));
         // Create a method instance.
-        HttpGet get = new HttpGet("http://" +dotenv.get("HOSTNAME")+":4000/getAllRecipe");
+        HttpGet get = new HttpGet("http://" + dotenv.get("HOSTNAME") + ":4000/getAllRecipe");
         System.out.println("Executing request " + get.getMethod() + " " + get.getURI());
         // HttpGet get = new HttpGet("http://server:4000/getAllRecipe");
-        try{
+        String[] apel = new String[0];
+        try {
             HttpResponse response = httpClient.execute(get);
             System.out.println(response);
-            //Ambil data
+            // Ambil data
             HttpEntity entity = response.getEntity();
             String responseString = EntityUtils.toString(entity, "UTF-8");
-            System.out.println(responseString); //masi dalam bntuk JSON string
+            System.out.println(responseString); // masi dalam bntuk JSON string
 
             JSONObject resJSON = null;
             try {
                 resJSON = new JSONObject(responseString);
-                //Ubah ke JSON
-                System.out.println(resJSON);
-                //JSON String
-                System.out.println(resJSON.toString());
-            } 
-            catch (JSONException e) {
+                // Ubah ke JSON
+                // System.out.println(resJSON);
+                // JSON Array
+                JSONArray recipeArray = resJSON.getJSONArray("part");
+                System.out.println("loop");
+                String[] test = new String[recipeArray.length()];
+                for (int i = 0; i < recipeArray.length(); i++) {
+                    JSONObject obj = recipeArray.getJSONObject(i);
+                    test[i] = obj.toString();
+                }
+                return test;
+            } catch (JSONException e) {
                 e.printStackTrace();
-                return "Something went wrong, " + e.getMessage();
+                System.out.println("Something went wrong, " + e.getMessage());
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return "Something went wrong, " + e.getMessage();
+            System.out.println("Something went wrong, " + e.getMessage());
         }
-
         // handle response dan oper ke store
-        return "get all recipe";
+        return apel;
     }
 
     @Override
-    public String test(String ip_store){
+    public String test(String ip_store) {
         // Create an instance of HttpClient.
         System.out.println(ip_store);
         return ip_store;
