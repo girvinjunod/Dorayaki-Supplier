@@ -28,7 +28,9 @@ REST
 - Notifikasi Email: 13519096
 - Caching query/response: 13519096
 - Docker: 13519096
-
+- Penampilan dan Pembuatan Resep: 13519090
+- Penampilan dan Pembuatan Bahan Baku: 13519090
+- Handle Request : 13519048
 
 
 SOAP
